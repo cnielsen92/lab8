@@ -48,9 +48,32 @@ $(function(){
 	moviesModel.refresh();
 
 	$('.place-order').click(function(){
-		cartModel.toJSON();
+		$.ajax({
+		    url: 'https://courses.washington.edu/info343/ajax/movies/orders/',
+		    type: 'POST',
+		    data: cartModel.toJSON(),
+		    contentType: 'application/json',
+		    success: function(responseData) {
+		    	alert('You have successfully placed an order!');
+		    	cartModel.setItems([]);
+		    },
+		    error: function(jqXHR, status, errorThrown) {
+		    	alert('This order was unsuccessful!');
+		        alert(errorThrown || status);
+		    }
+
+
+		}); //ajax()
 	})
 
-	return console.log();
+	cartModel.on('change', function(){
+	    localStorage.setItem('cart', cartModel.toJSON());
+	});
+
+	var cartJSON = localStorage.getItem('cart');
+	if (cartJSON && cartJSON.length > 0) {
+	    cartModel.setItems(JSON.parse(cartJSON));
+	}
+		     
 }); //doc ready()
 
